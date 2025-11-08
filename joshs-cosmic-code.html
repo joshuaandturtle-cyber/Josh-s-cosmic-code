@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Josh’s Cosmic Code</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(ellipse at top right, #0b122b, transparent 30%), 
+                  radial-gradient(ellipse at bottom left, #2b1058, transparent 25%), #000;
+      color: #e0e0ff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .container {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      box-shadow: 0 0 30px rgba(50,50,200,0.4);
+      padding: 20px;
+      max-width: 900px;
+      width: 100%;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2em;
+      color: #66ccff;
+      margin-top: 0;
+    }
+    textarea {
+      width: 100%;
+      min-height: 140px;
+      background: rgba(0,0,30,0.6);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      color: #fff;
+      padding: 10px;
+      font-size: 1em;
+    }
+    button {
+      background: linear-gradient(90deg, #2b6cb0, #805ad5);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin: 5px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover { opacity: 0.85; }
+    .flex { display: flex; justify-content: center; flex-wrap: wrap; }
+    .mapping {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+      gap: 4px;
+      font-size: 0.8em;
+      margin-top: 15px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+      padding: 8px;
+      overflow: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Josh’s Cosmic Code 🚀</h1>
+    <p style="text-align:center;color:#a0a0ff">Encode or decode secret interstellar messages!</p>
+    <label>Input</label>
+    <textarea id="input" placeholder="Type your message here..."></textarea>
+    <div class="flex">
+      <button onclick="setMode('encode')">Encode</button>
+      <button onclick="setMode('decode')">Decode</button>
+      <button onclick="transform()">Transform</button>
+      <button onclick="swap()">Swap</button>
+    </div>
+    <label>Output</label>
+    <textarea id="output" readonly placeholder="Result will appear here..."></textarea>
+    <div class="flex">
+      <button onclick="copyOutput()">Copy Output</button>
+      <button onclick="downloadOutput()">Download</button>
+    </div>
+    <div class="mapping" id="mapping"></div>
+    <p style="text-align:center;font-size:0.8em;color:#aaa">
+      Made for Josh — only letters are encoded. Enjoy your cosmic cipher ✨
+    </p>
+  </div>
+
+  <script>
+    const forwardMap = {
+      A:'•', B:'€', C:'£', D:'¥', E:'©', F:'∞', G:'µ', H:'α', I:'β', J:'π', K:'Ω', L:'Σ',
+      M:'°', N:'Δ', O:'₹', P:'¿', Q:'…', R:'æ', S:'ç', T:'ë', U:'Ğ', V:'ğ', W:'Œ', X:'Ş', Y:'Ÿ', Z:'ı'
+    };
+    const reverseMap = Object.fromEntries(Object.entries(forwardMap).map(([k,v])=>[v,k]));
+    let mode = 'encode';
+
+    function setMode(m){ mode = m; alert('Mode set to ' + m); }
+    function encode(text){ return text.split('').map(ch=>forwardMap[ch.toUpperCase()] || ch).join(''); }
+    function decode(text){ return text.split('').map(ch=>reverseMap[ch] || ch).join(''); }
+    function transform(){
+      const input = document.getElementById('input').value;
+      const output = mode==='encode'? encode(input): decode(input);
+      document.getElementById('output').value = output;
+    }
+    function swap(){
+      const i=document.getElementById('input'), o=document.getElementById('output');
+      const t=i.value; i.value=o.value; o.value=t; mode=(mode==='encode')?'decode':'encode';
+    }
+    function copyOutput(){
+      const out=document.getElementById('output'); out.select();
+      document.execCommand('copy'); alert('Copied!');
+    }
+    function downloadOutput(){
+      const text=document.getElementById('output').value;
+      const blob=new Blob([text],{type:'text/plain'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a'); a.href=url; a.download='joshs-cosmic-code.txt'; a.click();
+      URL.revokeObjectURL(url);
+    }
+    const mapDiv=document.getElementById('mapping');
+    Object.entries(forwardMap).forEach(([k,v])=>{
+      const d=document.createElement('div'); d.textContent=`${k}→${v}`; mapDiv.appendChild(d);
+    });
+  </script>
+</body>
+</html>
